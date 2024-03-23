@@ -3,9 +3,13 @@ import App from './App.jsx';
 import './index.css';
 
 import { ThemeProvider } from '@material-tailwind/react';
+import { store } from './redux/store';
+import { Provider } from 'react-redux';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <ThemeProvider>
-    <App />
-  </ThemeProvider>
+  <Provider store={store}>
+    <ThemeProvider>
+      <App />
+    </ThemeProvider>
+  </Provider>
 );
