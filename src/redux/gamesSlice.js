@@ -17,6 +17,11 @@ const initialState = {
     filteredGamesArr: [],
     filterGenre: '',
   },
+  stores: {
+    status: 'idle', // idle | loading | succeeded | failed
+    errMessage: '',
+    storesArr: [],
+  },
 };
 
 export const fetchGames = createAsyncThunk('/games/fetchGames', async () => {
@@ -74,6 +79,22 @@ export const fetchGamesByGenre = createAsyncThunk(
   }
 );
 
+export const fetchStores = createAsyncThunk('/games/fetchStores', async () => {
+  try {
+    const res = await fetch(
+      `${RAWG_URL}/stores?key=${import.meta.env.VITE_RAWGAPI_KEY}`,
+      {
+        method: 'GET',
+      }
+    );
+    const data = await res.json();
+
+    return data.results;
+  } catch (err) {
+    return err.message;
+  }
+});
+
 export const gamesSlice = createSlice({
   name: 'games',
   initialState,
@@ -116,6 +137,17 @@ export const gamesSlice = createSlice({
       .addCase(fetchGamesByGenre.rejected, (state, action) => {
         state.genresSection.status = 'failed';
         state.genresSection.errMessage = action.payload;
+      })
+      .addCase(fetchStores.pending, (state) => {
+        state.stores.status = 'loading';
+      })
+      .addCase(fetchStores.fulfilled, (state, action) => {
+        state.stores.status = 'succeeded';
+        state.stores.storesArr = action.payload;
+      })
+      .addCase(fetchStores.rejected, (state, action) => {
+        state.stores.status = 'failed';
+        state.stores.errMessage = action.payload;
       });
   },
 });
@@ -149,6 +181,16 @@ export const selectGenresSectionFilterGenre = createSelector(
   selectGenresSectionGamesArrFilteredByGenre = createSelector(
     [selectGenresSection],
     (genresSection) => genresSection.filteredGamesArr
+  );
+
+const selectStores = createSelector([selectGames], (games) => games.stores);
+export const selectStoresArrStatus = createSelector(
+    [selectStores],
+    (stores) => stores.status
+  ),
+  selectStoresArr = createSelector(
+    [selectStores],
+    (stores) => stores.storesArr
   );
 
 export const { setGenresSectionFilterGenre } = gamesSlice.actions;
