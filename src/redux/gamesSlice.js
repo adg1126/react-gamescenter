@@ -22,6 +22,11 @@ const initialState = {
     errMessage: '',
     storesArr: [],
   },
+  banner: {
+    status: 'idle', // idle | loading | succeeded | failed
+    errMessage: '',
+    bannerGame: {},
+  },
 };
 
 export const fetchGames = createAsyncThunk('/games/fetchGames', async () => {
@@ -95,6 +100,24 @@ export const fetchStores = createAsyncThunk('/games/fetchStores', async () => {
   }
 });
 
+export const fetchBannerGame = createAsyncThunk(
+  '/games/fetchBannerGame',
+  async (id) => {
+    try {
+      const res = await fetch(
+        `${RAWG_URL}/games/${id}?key=${import.meta.env.VITE_RAWGAPI_KEY}`,
+        {
+          method: 'GET',
+        }
+      );
+      const data = await res.json();
+      return data;
+    } catch (err) {
+      return err.message;
+    }
+  }
+);
+
 export const gamesSlice = createSlice({
   name: 'games',
   initialState,
@@ -148,6 +171,17 @@ export const gamesSlice = createSlice({
       .addCase(fetchStores.rejected, (state, action) => {
         state.stores.status = 'failed';
         state.stores.errMessage = action.payload;
+      })
+      .addCase(fetchBannerGame.pending, (state) => {
+        state.banner.status = 'loading';
+      })
+      .addCase(fetchBannerGame.fulfilled, (state, action) => {
+        state.banner.status = 'succeeded';
+        state.banner.bannerGame = action.payload;
+      })
+      .addCase(fetchBannerGame.rejected, (state, action) => {
+        state.banner.status = 'failed';
+        state.banner.errMessage = action.payload;
       });
   },
 });
@@ -191,6 +225,16 @@ export const selectStoresArrStatus = createSelector(
   selectStoresArr = createSelector(
     [selectStores],
     (stores) => stores.storesArr
+  );
+
+const selectBanner = createSelector([selectGames], (games) => games.banner);
+export const selectBannerStatus = createSelector(
+    [selectBanner],
+    (banner) => banner.status
+  ),
+  selectBannerGame = createSelector(
+    [selectBanner],
+    (banner) => banner.bannerGame
   );
 
 export const { setGenresSectionFilterGenre } = gamesSlice.actions;
