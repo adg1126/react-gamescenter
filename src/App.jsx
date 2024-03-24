@@ -10,13 +10,17 @@ import {
   selectGamesArrStatus,
   fetchGameGenres,
   selectGenresArrStatus,
+  fetchStores,
+  selectStoresArrStatus,
 } from './redux/gamesSlice';
 import { useEffect } from 'react';
+import OurStore from './components/OurStore';
 
 function App() {
   const dispatch = useDispatch();
   const gamesArrStatus = useSelector(selectGamesArrStatus),
-    genresArrStatus = useSelector(selectGenresArrStatus);
+    genresArrStatus = useSelector(selectGenresArrStatus),
+    storesArrStatus = useSelector(selectStoresArrStatus);
 
   useEffect(() => {
     if (gamesArrStatus === 'idle') {
@@ -25,7 +29,10 @@ function App() {
     if (genresArrStatus === 'idle') {
       dispatch(fetchGameGenres());
     }
-  }, [dispatch, gamesArrStatus, genresArrStatus]);
+    if (storesArrStatus === 'idle') {
+      dispatch(fetchStores());
+    }
+  }, [dispatch, gamesArrStatus, genresArrStatus, storesArrStatus]);
 
   return (
     <main className='w-full'>
@@ -33,6 +40,7 @@ function App() {
         <Hero />
         <Highlights />
         <Genres />
+        <OurStore />
         <Footer />
       </Appbar>
     </main>
