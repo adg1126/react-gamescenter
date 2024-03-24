@@ -10,7 +10,6 @@ import { faDesktop, faGlobe, faTag } from '@fortawesome/free-solid-svg-icons';
 export default function Hero() {
   const bannerGame = useSelector(selectBannerGame);
 
-  console.log(bannerGame);
   return Object.keys(bannerGame).length === 0 ? (
     <></>
   ) : (

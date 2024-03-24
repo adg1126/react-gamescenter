@@ -1,9 +1,3 @@
-import Appbar from './components/Appbar/Appbar';
-import Hero from './components/Hero';
-import Highlights from './components/Highlights';
-import Genres from './components/Genres';
-import Footer from './components/Footer';
-
 import { useDispatch, useSelector } from 'react-redux';
 import {
   fetchGames,
@@ -17,7 +11,13 @@ import {
   selectBannerStatus,
 } from './redux/gamesSlice';
 import { useEffect } from 'react';
-import OurStore from './components/OurStore';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+import Appbar from './components/Appbar/Appbar';
+import Home from './pages/Home';
+import Creators from './pages/Creators';
+import Stores from './pages/Stores';
+import Games from './pages/Games';
 
 function App() {
   const dispatch = useDispatch();
@@ -58,14 +58,32 @@ function App() {
 
   return (
     <main className='w-full'>
-      <Appbar>
-        <Hero />
-        <Highlights />
-        <Genres />
-        <OurStore />
-        <Footer />
-        <Footer />
-      </Appbar>
+      <BrowserRouter>
+        <Appbar>
+          <Routes>
+            <Route
+              exact
+              path='/'
+              Component={Home}
+            />
+            <Route
+              exact
+              path='/creators'
+              Component={Creators}
+            />
+            <Route
+              exact
+              path='/stores'
+              Component={Stores}
+            />
+            <Route
+              exact
+              path='/games'
+              Component={Games}
+            />
+          </Routes>
+        </Appbar>
+      </BrowserRouter>
     </main>
   );
 }

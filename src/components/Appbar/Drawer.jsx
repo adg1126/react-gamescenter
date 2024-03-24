@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 import {
   Drawer as MaterialDrawer,
   Typography,
@@ -44,14 +46,17 @@ export default function Drawer({ setDrawerOpen, drawerOpen, routesArr }) {
 
       <List>
         {routesArr?.length &&
-          routesArr.map((r, i) => (
-            <ListItem
-              key={i}
-              className='ml-2'
-            >
-              {r}
-            </ListItem>
-          ))}
+          routesArr.map(
+            (r, i) =>
+              i !== 0 && (
+                <Link
+                  to={r.route}
+                  key={i}
+                >
+                  <ListItem className='ml-2'>{r.name}</ListItem>
+                </Link>
+              )
+          )}
       </List>
     </MaterialDrawer>
   );
