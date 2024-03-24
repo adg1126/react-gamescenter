@@ -6,18 +6,23 @@ const initialState = {
   status: 'idle', // idle | loading | succeeded | failed
   errMessage: '',
   gamesArr: [],
-  filterOptions: {
-    price: { min: 1, max: 1000 },
-    category: '',
-    sortBy: 'Default',
+  genres: {
+    status: 'idle', // idle | loading | succeeded | failed
+    errMessage: '',
+    genresArr: [],
   },
-  filteredGamesArr: [],
+  genresSection: {
+    status: 'idle', // idle | loading | succeeded | failed
+    errMessage: '',
+    filteredGamesArr: [],
+    filterGenre: '',
+  },
 };
 
 export const fetchGames = createAsyncThunk('/games/fetchGames', async () => {
   try {
     const res = await fetch(
-      `${RAWG_URL}?key=${import.meta.env.VITE_RAWGAPI_KEY}`,
+      `${RAWG_URL}/games?key=${import.meta.env.VITE_RAWGAPI_KEY}`,
       {
         method: 'GET',
       }
@@ -30,10 +35,53 @@ export const fetchGames = createAsyncThunk('/games/fetchGames', async () => {
   }
 });
 
+export const fetchGameGenres = createAsyncThunk(
+  '/games/fetchGameGenres',
+  async () => {
+    try {
+      const res = await fetch(
+        `${RAWG_URL}/genres?key=${import.meta.env.VITE_RAWGAPI_KEY}`,
+        {
+          method: 'GET',
+        }
+      );
+      const data = await res.json();
+
+      return data.results;
+    } catch (err) {
+      return err.message;
+    }
+  }
+);
+
+export const fetchGamesByGenre = createAsyncThunk(
+  '/games/fetchGamesByGenre',
+  async (genre) => {
+    try {
+      const res = await fetch(
+        `${RAWG_URL}/games?genres=${genre}&key=${
+          import.meta.env.VITE_RAWGAPI_KEY
+        }`,
+        {
+          method: 'GET',
+        }
+      );
+      const data = await res.json();
+      return data.results;
+    } catch (err) {
+      return err.message;
+    }
+  }
+);
+
 export const gamesSlice = createSlice({
   name: 'games',
   initialState,
-  reducers: {},
+  reducers: {
+    setGenresSectionFilterGenre: (state, action) => {
+      state.genresSection.filterGenre = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchGames.pending, (state) => {
@@ -46,6 +94,28 @@ export const gamesSlice = createSlice({
       .addCase(fetchGames.rejected, (state, action) => {
         state.status = 'failed';
         state.errMessage = action.payload;
+      })
+      .addCase(fetchGameGenres.pending, (state) => {
+        state.genres.status = 'loading';
+      })
+      .addCase(fetchGameGenres.fulfilled, (state, action) => {
+        state.genres.status = 'succeeded';
+        state.genres.genresArr = action.payload;
+      })
+      .addCase(fetchGameGenres.rejected, (state, action) => {
+        state.genres.status = 'failed';
+        state.genres.errMessage = action.payload;
+      })
+      .addCase(fetchGamesByGenre.pending, (state) => {
+        state.genresSection.status = 'loading';
+      })
+      .addCase(fetchGamesByGenre.fulfilled, (state, action) => {
+        state.genresSection.status = 'succeeded';
+        state.genresSection.filteredGamesArr = action.payload;
+      })
+      .addCase(fetchGamesByGenre.rejected, (state, action) => {
+        state.genresSection.status = 'failed';
+        state.genresSection.errMessage = action.payload;
       });
   },
 });
@@ -57,5 +127,30 @@ export const selectGamesArr = createSelector(
     (games) => games.gamesArr
   ),
   selectGamesArrStatus = createSelector([selectGames], (games) => games.status);
+
+const selectGenres = createSelector([selectGames], (games) => games.genres);
+export const selectGenresArrStatus = createSelector(
+    [selectGenres],
+    (genres) => genres.status
+  ),
+  selectGenresArr = createSelector(
+    [selectGenres],
+    (genres) => genres.genresArr
+  );
+
+const selectGenresSection = createSelector(
+  [selectGames],
+  (games) => games.genresSection
+);
+export const selectGenresSectionFilterGenre = createSelector(
+    [selectGenresSection],
+    (genresSection) => genresSection.filterGenre
+  ),
+  selectGenresSectionGamesArrFilteredByGenre = createSelector(
+    [selectGenresSection],
+    (genresSection) => genresSection.filteredGamesArr
+  );
+
+export const { setGenresSectionFilterGenre } = gamesSlice.actions;
 
 export default gamesSlice.reducer;
