@@ -12,6 +12,9 @@ import {
   selectGenresArrStatus,
   fetchStores,
   selectStoresArrStatus,
+  selectGamesArr,
+  fetchBannerGame,
+  selectBannerStatus,
 } from './redux/gamesSlice';
 import { useEffect } from 'react';
 import OurStore from './components/OurStore';
@@ -20,7 +23,11 @@ function App() {
   const dispatch = useDispatch();
   const gamesArrStatus = useSelector(selectGamesArrStatus),
     genresArrStatus = useSelector(selectGenresArrStatus),
-    storesArrStatus = useSelector(selectStoresArrStatus);
+    storesArrStatus = useSelector(selectStoresArrStatus),
+    gamesArr = useSelector(selectGamesArr),
+    bannerStatus = useSelector(selectBannerStatus);
+
+  const getRandomeGame = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
   useEffect(() => {
     if (gamesArrStatus === 'idle') {
@@ -32,7 +39,22 @@ function App() {
     if (storesArrStatus === 'idle') {
       dispatch(fetchStores());
     }
-  }, [dispatch, gamesArrStatus, genresArrStatus, storesArrStatus]);
+
+    if (gamesArr.length > 0) {
+      const b = getRandomeGame(gamesArr);
+
+      if (bannerStatus === 'idle') {
+        dispatch(fetchBannerGame(b.id));
+      }
+    }
+  }, [
+    dispatch,
+    gamesArrStatus,
+    genresArrStatus,
+    storesArrStatus,
+    gamesArr,
+    bannerStatus,
+  ]);
 
   return (
     <main className='w-full'>
@@ -41,6 +63,7 @@ function App() {
         <Highlights />
         <Genres />
         <OurStore />
+        <Footer />
         <Footer />
       </Appbar>
     </main>
