@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 import { selectGamesArr } from '../redux/gamesSlice';
+import { Typography, Button } from '@material-tailwind/react';
 import { Card } from './Card';
-import { Typography } from '@material-tailwind/react';
 
 export default function Highlights() {
   const gamesArr = useSelector(selectGamesArr);
@@ -22,7 +22,21 @@ export default function Highlights() {
           gamesArr.slice(0, 9).map((g, i) => (
             <Card
               key={i}
-              {...g}
+              backgroundImage={g.background_image}
+              title={g.name}
+              paragraphsArr={[
+                { title: 'Release Date', paragraph: g.released },
+                { title: 'Updated', paragraph: g.updated },
+              ]}
+              footer={
+                <Button
+                  size='lg'
+                  fullWidth={true}
+                >
+                  See more
+                </Button>
+              }
+              cardFlex='col'
             />
           ))}
       </div>

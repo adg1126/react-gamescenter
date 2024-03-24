@@ -8,7 +8,7 @@ import {
   selectGamesArr,
 } from '../redux/gamesSlice';
 
-import { Typography, Select, Option } from '@material-tailwind/react';
+import { Typography, Select, Option, Button } from '@material-tailwind/react';
 import { Card } from './Card';
 import { useEffect } from 'react';
 
@@ -65,13 +65,41 @@ export default function Genres() {
           ? filteredGamesArr.slice(0, 9).map((g, i) => (
               <Card
                 key={i}
-                {...g}
+                backgroundImage={g.background_image}
+                title={g.name}
+                paragraphsArr={[
+                  { title: 'Release Date', paragraph: g.released },
+                  { title: 'Updated', paragraph: g.updated },
+                ]}
+                footer={
+                  <Button
+                    size='lg'
+                    fullWidth={true}
+                  >
+                    See more
+                  </Button>
+                }
+                cardFlex='col'
               />
             ))
           : gamesArr.slice(0, 9).map((g, i) => (
               <Card
                 key={i}
-                {...g}
+                backgroundImage={g.background_image}
+                title={g.name}
+                paragraphsArr={[
+                  { title: 'Release Date', paragraph: g.released },
+                  { title: 'Updated', paragraph: g.updated },
+                ]}
+                footer={
+                  <Button
+                    size='lg'
+                    fullWidth={true}
+                  >
+                    See more
+                  </Button>
+                }
+                cardFlex='col'
               />
             ))}
       </div>
