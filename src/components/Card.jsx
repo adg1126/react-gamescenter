@@ -24,9 +24,9 @@ export function Card(props) {
           <div className='to-bg-black-10 absolute inset-0 h-full w-full bg-gradient-to-tr from-transparent via-transparent to-black/60 ' />
         </>
       ) : (
-        <div className={`${cardFlex === 'col' ? '' : 'md:w-2/5'}`}>
+        <div className='md:w-2/5'>
           <img
-            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             src={backgroundImage}
             alt={title}
           />

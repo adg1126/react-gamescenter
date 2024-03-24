@@ -31,14 +31,16 @@ export default function Genres() {
 
   return (
     <section className='mt-32 flex flex-col items-center gap-y-8'>
-      <div className='flex flex-col gap-y-2'>
-        <Typography
-          variant='h1'
-          color='blue-gray'
-          className='font-bold'
-        >
-          FILTER BY GENRES
-        </Typography>
+      <div className='flex flex-col gap-y-2 w-4/5 items-center'>
+        <div className='w-4/5 flex flex-col items-center'>
+          <Typography
+            variant='h1'
+            color='blue-gray'
+            className='font-bold'
+          >
+            FILTER BY GENRES
+          </Typography>
+        </div>
         <div>
           {genresArr?.length && (
             <Select
