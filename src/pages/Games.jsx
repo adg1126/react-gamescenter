@@ -1,4 +1,4 @@
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import {
   selectCurrrentPageGamesArr,
   selectCurrentPageIndex,
@@ -7,53 +7,15 @@ import {
   setPageSize,
 } from '../redux/gamesSlice';
 
-import {
-  Typography,
-  IconButton,
-  Button,
-  Input,
-} from '@material-tailwind/react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Typography, Button } from '@material-tailwind/react';
 
 import { Card } from '../components/Card';
-import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
-import { usePagination, DOTS } from '../components/usePagination';
+import Pagination from '../components/Pagination';
 
 export default function Games() {
-  const dispatch = useDispatch();
   const currentPageGameArr = useSelector(selectCurrrentPageGamesArr),
     currentPageIndex = useSelector(selectCurrentPageIndex),
     pageSize = useSelector(selectPageSize);
-
-  const next = () => {
-    if (currentPageIndex === 20) return;
-    dispatch(setCurrentPageIndex(currentPageIndex + 1));
-  };
-
-  const prev = () => {
-    if (currentPageIndex === 1) return;
-    dispatch(setCurrentPageIndex(currentPageIndex - 1));
-  };
-
-  const getItemProps = (index) => ({
-    variant: currentPageIndex === index ? 'filled' : 'text',
-    color: 'gray',
-    onClick: () => dispatch(setCurrentPageIndex(index)),
-  });
-
-  const totalCount = 200,
-    siblingCount = 1;
-
-  const paginationRange = usePagination({
-    currentPageIndex,
-    totalCount,
-    siblingCount,
-    pageSize,
-  });
-
-  const handleSetPageSize = (e) => {
-    dispatch(setPageSize(e.target.value));
-  };
 
   return (
     <section className='mt-8 flex flex-col items-center gap-y-8'>
@@ -66,7 +28,14 @@ export default function Games() {
           ALL GAMES
         </Typography>
 
-        <div className='flex items-center gap-8'>
+        <Pagination
+          currentPageIndex={currentPageIndex}
+          setCurrentPageIndex={setCurrentPageIndex}
+          pageSize={pageSize}
+          setPageSize={setPageSize}
+        />
+
+        {/* <div className='flex items-center gap-8'>
           <Button
             variant='text'
             className='flex items-center gap-2'
@@ -120,7 +89,7 @@ export default function Games() {
             max={100}
             value={pageSize}
           />
-        </div>
+        </div> */}
       </div>
       <div className='overflow-hidden w-5/6 h-full flex flex-row flex-wrap gap-12 justify-center'>
         {currentPageGameArr?.length > 0 &&
