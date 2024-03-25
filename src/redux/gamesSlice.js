@@ -27,6 +27,15 @@ const initialState = {
     errMessage: '',
     bannerGame: {},
   },
+  gamesPagination: {
+    currentPage: {
+      status: 'idle', // idle | loading | succeeded | failed
+      errMessage: '',
+      gamesArr: [],
+    },
+    currentPageIndex: 1,
+    pageSize: 10,
+  },
 };
 
 export const fetchGames = createAsyncThunk('/games/fetchGames', async () => {
@@ -118,12 +127,38 @@ export const fetchBannerGame = createAsyncThunk(
   }
 );
 
+export const fetchCurrentPageGamesArr = createAsyncThunk(
+  '/games/fetchCurrentPageGamesArr',
+  async ({ currentPageIndex, pageSize }) => {
+    try {
+      const res = await fetch(
+        `${RAWG_URL}/games?page=${currentPageIndex}&page_size=${pageSize}&key=${
+          import.meta.env.VITE_RAWGAPI_KEY
+        }`,
+        {
+          method: 'GET',
+        }
+      );
+      const data = await res.json();
+      return data.results;
+    } catch (err) {
+      return err.message;
+    }
+  }
+);
+
 export const gamesSlice = createSlice({
   name: 'games',
   initialState,
   reducers: {
     setGenresSectionFilterGenre: (state, action) => {
       state.genresSection.filterGenre = action.payload;
+    },
+    setCurrentPageIndex: (state, action) => {
+      state.gamesPagination.currentPageIndex = action.payload;
+    },
+    setPageSize: (state, action) => {
+      state.gamesPagination.pageSize = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -182,6 +217,17 @@ export const gamesSlice = createSlice({
       .addCase(fetchBannerGame.rejected, (state, action) => {
         state.banner.status = 'failed';
         state.banner.errMessage = action.payload;
+      })
+      .addCase(fetchCurrentPageGamesArr.pending, (state) => {
+        state.gamesPagination.currentPage.status = 'loading';
+      })
+      .addCase(fetchCurrentPageGamesArr.fulfilled, (state, action) => {
+        state.gamesPagination.currentPage.status = 'succeeded';
+        state.gamesPagination.currentPage.gamesArr = action.payload;
+      })
+      .addCase(fetchCurrentPageGamesArr.rejected, (state, action) => {
+        state.gamesPagination.currentPage.status = 'failed';
+        state.gamesPagination.currentPage.errMessage = action.payload;
       });
   },
 });
@@ -237,6 +283,28 @@ export const selectBannerStatus = createSelector(
     (banner) => banner.bannerGame
   );
 
-export const { setGenresSectionFilterGenre } = gamesSlice.actions;
+const selectGamesPagination = createSelector(
+  [selectGames],
+  (games) => games.gamesPagination
+);
+export const selectGamesPaginationStatus = createSelector(
+    [selectGamesPagination],
+    (gamesPagination) => gamesPagination.status
+  ),
+  selectCurrentPageIndex = createSelector(
+    [selectGamesPagination],
+    (gamesPagination) => gamesPagination.currentPageIndex
+  ),
+  selectCurrrentPageGamesArr = createSelector(
+    [selectGamesPagination],
+    (gamesPagination) => gamesPagination.currentPage.gamesArr
+  ),
+  selectPageSize = createSelector(
+    [selectGamesPagination],
+    (gamesPagination) => gamesPagination.pageSize
+  );
+
+export const { setGenresSectionFilterGenre, setCurrentPageIndex, setPageSize } =
+  gamesSlice.actions;
 
 export default gamesSlice.reducer;
