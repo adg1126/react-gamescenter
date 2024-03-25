@@ -21,6 +21,8 @@ const initialState = {
     status: 'idle', // idle | loading | succeeded | failed
     errMessage: '',
     storesArr: [],
+    currentPageIndex: 1,
+    pageSize: 10,
   },
   banner: {
     status: 'idle', // idle | loading | succeeded | failed
@@ -160,6 +162,12 @@ export const gamesSlice = createSlice({
     setGamesPaginationPageSize: (state, action) => {
       state.gamesPagination.pageSize = action.payload;
     },
+    setStoresCurrentPageIndex: (state, action) => {
+      state.stores.currentPageIndex = action.payload;
+    },
+    setStoresPageSize: (state, action) => {
+      state.stores.pageSize = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -271,6 +279,14 @@ export const selectStoresArrStatus = createSelector(
   selectStoresArr = createSelector(
     [selectStores],
     (stores) => stores.storesArr
+  ),
+  selectStoresCurrentPageIndex = createSelector(
+    [selectStores],
+    (stores) => stores.currentPageIndex
+  ),
+  selectStoresPageSize = createSelector(
+    [selectStores],
+    (stores) => stores.pageSize
   );
 
 const selectBanner = createSelector([selectGames], (games) => games.banner);
@@ -308,6 +324,8 @@ export const {
   setGenresSectionFilterGenre,
   setGamesPaginationCurrentPageIndex,
   setGamesPaginationPageSize,
+  setStoresCurrentPageIndex,
+  setStoresPageSize,
 } = gamesSlice.actions;
 
 export default gamesSlice.reducer;
