@@ -29,6 +29,11 @@ const initialState = {
     errMessage: '',
     bannerGame: {},
   },
+  platforms: {
+    status: 'idle', // idle | loading | succeeded | failed
+    errMessage: '',
+    platformsArr: [],
+  },
   gamesPagination: {
     currentPage: {
       status: 'idle', // idle | loading | succeeded | failed
@@ -37,6 +42,10 @@ const initialState = {
     },
     currentPageIndex: 1,
     pageSize: 10,
+    filterOptions: {
+      genre: '',
+      platform: '',
+    },
   },
   creators: {
     status: 'idle', // idle | loading | succeeded | failed
@@ -139,12 +148,33 @@ export const fetchBannerGame = createAsyncThunk(
   }
 );
 
-export const fetchCurrentPageGamesArr = createAsyncThunk(
-  '/games/fetchCurrentPageGamesArr',
-  async ({ currentPageIndex, pageSize }) => {
+export const fetchPlatforms = createAsyncThunk(
+  '/games/fetchPlatforms',
+  async () => {
     try {
       const res = await fetch(
-        `${RAWG_URL}/games?page=${currentPageIndex}&page_size=${pageSize}&key=${
+        `${RAWG_URL}/platforms?key=${import.meta.env.VITE_RAWGAPI_KEY}`,
+        {
+          method: 'GET',
+        }
+      );
+      const data = await res.json();
+
+      return data.results;
+    } catch (err) {
+      return err.message;
+    }
+  }
+);
+
+export const fetchCurrentPageGamesArr = createAsyncThunk(
+  '/games/fetchCurrentPageGamesArr',
+  async ({ currentPageIndex, pageSize, genre, platform }) => {
+    try {
+      const res = await fetch(
+        `${RAWG_URL}/games?page=${currentPageIndex}&page_size=${pageSize}&${
+          genre.length ? `genres=${genre}&` : ''
+        }${platform.length ? `platforms=${platform}&` : ''}key=${
           import.meta.env.VITE_RAWGAPI_KEY
         }`,
         {
@@ -213,6 +243,12 @@ export const gamesSlice = createSlice({
     setStoresPageSize: (state, action) => {
       state.stores.pageSize = action.payload;
     },
+    setGamesPaginationFilterOptionsGenre: (state, action) => {
+      state.gamesPagination.filterOptions.genre = action.payload;
+    },
+    setGamesPaginationFilterOptionsPlatforms: (state, action) => {
+      state.gamesPagination.filterOptions.platform = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -270,6 +306,17 @@ export const gamesSlice = createSlice({
       .addCase(fetchBannerGame.rejected, (state, action) => {
         state.banner.status = 'failed';
         state.banner.errMessage = action.payload;
+      })
+      .addCase(fetchPlatforms.pending, (state) => {
+        state.platforms.status = 'loading';
+      })
+      .addCase(fetchPlatforms.fulfilled, (state, action) => {
+        state.platforms.status = 'succeeded';
+        state.platforms.platformsArr = action.payload;
+      })
+      .addCase(fetchPlatforms.rejected, (state, action) => {
+        state.platforms.status = 'failed';
+        state.platforms.errMessage = action.payload;
       })
       .addCase(fetchCurrentPageGamesArr.pending, (state) => {
         state.gamesPagination.currentPage.status = 'loading';
@@ -366,6 +413,20 @@ export const selectBannerStatus = createSelector(
     (banner) => banner.bannerGame
   );
 
+const selectPlatforms = createSelector(
+  [selectGames],
+  (games) => games.platforms
+);
+export const selectPlatformsArrStatus = createSelector(
+    [selectPlatforms],
+    (platforms) => platforms.status
+  ),
+  selectPlatformsArr = createSelector(
+    [selectPlatforms],
+    (platforms) => platforms.platformsArr
+  );
+
+// Pagination
 const selectGamesPagination = createSelector(
   [selectGames],
   (games) => games.gamesPagination
@@ -385,6 +446,18 @@ export const selectGamesPaginationStatus = createSelector(
   selectGamesPaginationPageSize = createSelector(
     [selectGamesPagination],
     (gamesPagination) => gamesPagination.pageSize
+  );
+const selectGamesPaginationFilterOps = createSelector(
+  [selectGamesPagination],
+  (gamesPagination) => gamesPagination.filterOptions
+);
+export const selectGamesPaginationFilterOptionsGenre = createSelector(
+    [selectGamesPaginationFilterOps],
+    (filterOptions) => filterOptions.genre
+  ),
+  selectGamesPaginationFilterOptionsPlatform = createSelector(
+    [selectGamesPaginationFilterOps],
+    (filterOptions) => filterOptions.platform
   );
 
 const selectCreators = createSelector([selectGames], (games) => games.creators);
@@ -410,6 +483,8 @@ export const {
   setGamesPaginationPageSize,
   setStoresCurrentPageIndex,
   setStoresPageSize,
+  setGamesPaginationFilterOptionsGenre,
+  setGamesPaginationFilterOptionsPlatforms,
 } = gamesSlice.actions;
 
 export default gamesSlice.reducer;
