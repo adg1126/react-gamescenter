@@ -9,6 +9,10 @@ import {
   selectGamesArr,
   fetchBannerGame,
   selectBannerStatus,
+  selectGamesPaginationStatus,
+  selectCurrentPageIndex,
+  fetchCurrentPageGamesArr,
+  selectPageSize,
 } from './redux/gamesSlice';
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -25,7 +29,10 @@ function App() {
     genresArrStatus = useSelector(selectGenresArrStatus),
     storesArrStatus = useSelector(selectStoresArrStatus),
     gamesArr = useSelector(selectGamesArr),
-    bannerStatus = useSelector(selectBannerStatus);
+    bannerStatus = useSelector(selectBannerStatus),
+    gamesPaginationStatus = useSelector(selectGamesPaginationStatus),
+    currentPageIndex = useSelector(selectCurrentPageIndex),
+    pageSize = useSelector(selectPageSize);
 
   const getRandomeGame = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
@@ -39,14 +46,14 @@ function App() {
     if (storesArrStatus === 'idle') {
       dispatch(fetchStores());
     }
-
     if (gamesArr.length > 0) {
       const b = getRandomeGame(gamesArr);
-
       if (bannerStatus === 'idle') {
         dispatch(fetchBannerGame(b.id));
       }
     }
+
+    dispatch(fetchCurrentPageGamesArr({ currentPageIndex, pageSize }));
   }, [
     dispatch,
     gamesArrStatus,
@@ -54,6 +61,9 @@ function App() {
     storesArrStatus,
     gamesArr,
     bannerStatus,
+    gamesPaginationStatus,
+    currentPageIndex,
+    pageSize,
   ]);
 
   return (
