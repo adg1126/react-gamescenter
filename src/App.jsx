@@ -15,6 +15,10 @@ import {
   selectGamesPaginationPageSize,
   fetchCreators,
   selectCreatorsArrStatus,
+  selectGamesPaginationFilterOptionsGenre,
+  fetchPlatforms,
+  selectPlatformsArrStatus,
+  selectGamesPaginationFilterOptionsPlatform,
 } from './redux/gamesSlice';
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -39,7 +43,14 @@ function App() {
       selectGamesPaginationCurrentPageIndex
     ),
     gamesPaginationPageSize = useSelector(selectGamesPaginationPageSize),
-    creatorsArrStatus = useSelector(selectCreatorsArrStatus);
+    creatorsArrStatus = useSelector(selectCreatorsArrStatus),
+    gamesPaginationFilterOpsGenre = useSelector(
+      selectGamesPaginationFilterOptionsGenre
+    ),
+    gamesPaginationFilterOpsPlatform = useSelector(
+      selectGamesPaginationFilterOptionsPlatform
+    ),
+    platformsArrStatus = useSelector(selectPlatformsArrStatus);
 
   const getRandomeGame = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
@@ -59,10 +70,15 @@ function App() {
         dispatch(fetchBannerGame(b.id));
       }
     }
+    if (platformsArrStatus === 'idle') {
+      dispatch(fetchPlatforms());
+    }
     dispatch(
       fetchCurrentPageGamesArr({
         currentPageIndex: gamesPaginationCurrentPageIndex,
         pageSize: gamesPaginationPageSize,
+        genre: gamesPaginationFilterOpsGenre,
+        platform: gamesPaginationFilterOpsPlatform,
       })
     );
     if (creatorsArrStatus === 'idle') {
@@ -79,6 +95,9 @@ function App() {
     gamesPaginationCurrentPageIndex,
     gamesPaginationPageSize,
     creatorsArrStatus,
+    gamesPaginationFilterOpsGenre,
+    platformsArrStatus,
+    gamesPaginationFilterOpsPlatform,
   ]);
 
   return (

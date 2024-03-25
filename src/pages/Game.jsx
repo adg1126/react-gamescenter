@@ -27,8 +27,6 @@ export default function Game() {
     }
   });
 
-  console.log(game);
-
   return Object.keys(game).length === 0 ? (
     <></>
   ) : (
