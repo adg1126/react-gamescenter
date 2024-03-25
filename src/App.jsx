@@ -25,6 +25,7 @@ import Creators from './pages/Creators';
 import Stores from './pages/Stores';
 import Games from './pages/Games';
 import Footer from './components/Footer';
+import Game from './pages/Game';
 
 function App() {
   const dispatch = useDispatch();
@@ -100,10 +101,15 @@ function App() {
               path='/stores'
               Component={Stores}
             />
+
             <Route
               exact
               path='/games'
               Component={Games}
+            />
+            <Route
+              path='/games/:id'
+              Component={Game}
             />
           </Routes>
         </Appbar>
