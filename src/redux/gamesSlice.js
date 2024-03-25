@@ -38,6 +38,11 @@ const initialState = {
     currentPageIndex: 1,
     pageSize: 10,
   },
+  creators: {
+    status: 'idle', // idle | loading | succeeded | failed
+    errMessage: '',
+    creatorsArr: [],
+  },
 };
 
 export const fetchGames = createAsyncThunk('/games/fetchGames', async () => {
@@ -149,6 +154,26 @@ export const fetchCurrentPageGamesArr = createAsyncThunk(
   }
 );
 
+export const fetchCreators = createAsyncThunk(
+  '/games/fetchCreators',
+  async () => {
+    try {
+      const res = await fetch(
+        `${RAWG_URL}/creators?key=${import.meta.env.VITE_RAWGAPI_KEY}`,
+        {
+          method: 'GET',
+        }
+      );
+
+      const data = await res.json();
+
+      return data.results;
+    } catch (err) {
+      return err.message;
+    }
+  }
+);
+
 export const gamesSlice = createSlice({
   name: 'games',
   initialState,
@@ -236,6 +261,17 @@ export const gamesSlice = createSlice({
       .addCase(fetchCurrentPageGamesArr.rejected, (state, action) => {
         state.gamesPagination.currentPage.status = 'failed';
         state.gamesPagination.currentPage.errMessage = action.payload;
+      })
+      .addCase(fetchCreators.pending, (state) => {
+        state.creators.status = 'loading';
+      })
+      .addCase(fetchCreators.fulfilled, (state, action) => {
+        state.creators.status = 'succeeded';
+        state.creators.creatorsArr = action.payload;
+      })
+      .addCase(fetchCreators.rejected, (state, action) => {
+        state.creators.status = 'failed';
+        state.creators.errMessage = action.payload;
       });
   },
 });
@@ -318,6 +354,16 @@ export const selectGamesPaginationStatus = createSelector(
   selectGamesPaginationPageSize = createSelector(
     [selectGamesPagination],
     (gamesPagination) => gamesPagination.pageSize
+  );
+
+const selectCreators = createSelector([selectGames], (games) => games.creators);
+export const selectCreatorsArrStatus = createSelector(
+    [selectCreators],
+    (creators) => creators.status
+  ),
+  selectCreatorsArr = createSelector(
+    [selectCreators],
+    (creators) => creators.creatorsArr
   );
 
 export const {
