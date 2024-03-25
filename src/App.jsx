@@ -24,6 +24,7 @@ import Home from './pages/Home';
 import Creators from './pages/Creators';
 import Stores from './pages/Stores';
 import Games from './pages/Games';
+import Footer from './components/Footer';
 
 function App() {
   const dispatch = useDispatch();
@@ -63,7 +64,6 @@ function App() {
         pageSize: gamesPaginationPageSize,
       })
     );
-
     if (creatorsArrStatus === 'idle') {
       dispatch(fetchCreators());
     }
@@ -107,6 +107,7 @@ function App() {
             />
           </Routes>
         </Appbar>
+        <Footer />
       </BrowserRouter>
     </main>
   );
