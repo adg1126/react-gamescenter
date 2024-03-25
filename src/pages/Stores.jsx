@@ -27,14 +27,16 @@ export default function Stores() {
           ALL STORES
         </Typography>
 
-        <Pagination
-          currentPageIndex={currentPageIndex}
-          setCurrentPageIndex={setStoresCurrentPageIndex}
-          pageSize={pageSize}
-          setPageSize={setStoresPageSize}
-          totalCount={storesArr.length}
-          siblingCount={1}
-        />
+        {storesArr?.length > 0 && (
+          <Pagination
+            currentPageIndex={currentPageIndex}
+            setCurrentPageIndex={setStoresCurrentPageIndex}
+            pageSize={pageSize}
+            setPageSize={setStoresPageSize}
+            totalCount={storesArr.length}
+            siblingCount={1}
+          />
+        )}
       </div>
       <div className='overflow-hidden w-5/6 h-full flex flex-row flex-wrap gap-12 justify-center'>
         {storesArr?.length > 0 &&

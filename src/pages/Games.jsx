@@ -30,14 +30,16 @@ export default function Games() {
           ALL GAMES
         </Typography>
 
-        <Pagination
-          currentPageIndex={currentPageIndex}
-          setCurrentPageIndex={setGamesPaginationCurrentPageIndex}
-          pageSize={pageSize}
-          setPageSize={setGamesPaginationPageSize}
-          totalCount={200}
-          siblingCount={1}
-        />
+        {currentPageGameArr?.length > 0 && (
+          <Pagination
+            currentPageIndex={currentPageIndex}
+            setCurrentPageIndex={setGamesPaginationCurrentPageIndex}
+            pageSize={pageSize}
+            setPageSize={setGamesPaginationPageSize}
+            totalCount={200}
+            siblingCount={1}
+          />
+        )}
       </div>
       <div className='overflow-hidden w-5/6 h-full flex flex-row flex-wrap gap-12 justify-center'>
         {currentPageGameArr?.length > 0 &&
