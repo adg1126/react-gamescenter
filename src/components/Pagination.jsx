@@ -11,6 +11,8 @@ export default function Pagination({
   setCurrentPageIndex,
   pageSize,
   setPageSize,
+  totalCount,
+  siblingCount,
 }) {
   const dispatch = useDispatch();
 
@@ -29,9 +31,6 @@ export default function Pagination({
     color: 'gray',
     onClick: () => dispatch(setCurrentPageIndex(index)),
   });
-
-  const totalCount = 200,
-    siblingCount = 1;
 
   const paginationRange = usePagination({
     currentPageIndex,
