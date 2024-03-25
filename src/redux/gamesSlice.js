@@ -43,6 +43,11 @@ const initialState = {
     errMessage: '',
     creatorsArr: [],
   },
+  game: {
+    status: 'idle', // idle | loading | succeeded | failed
+    errMessage: '',
+    game: {},
+  },
 };
 
 export const fetchGames = createAsyncThunk('/games/fetchGames', async () => {
@@ -174,6 +179,21 @@ export const fetchCreators = createAsyncThunk(
   }
 );
 
+export const fetchGame = createAsyncThunk('/games/fetchGame', async (id) => {
+  try {
+    const res = await fetch(
+      `${RAWG_URL}/games/${id}?key=${import.meta.env.VITE_RAWGAPI_KEY}`,
+      {
+        method: 'GET',
+      }
+    );
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    return err.message;
+  }
+});
+
 export const gamesSlice = createSlice({
   name: 'games',
   initialState,
@@ -272,6 +292,17 @@ export const gamesSlice = createSlice({
       .addCase(fetchCreators.rejected, (state, action) => {
         state.creators.status = 'failed';
         state.creators.errMessage = action.payload;
+      })
+      .addCase(fetchGame.pending, (state) => {
+        state.game.status = 'loading';
+      })
+      .addCase(fetchGame.fulfilled, (state, action) => {
+        state.game.status = 'succeeded';
+        state.game.game = action.payload;
+      })
+      .addCase(fetchGame.rejected, (state, action) => {
+        state.game.status = 'failed';
+        state.game.errMessage = action.payload;
       });
   },
 });
@@ -365,6 +396,13 @@ export const selectCreatorsArrStatus = createSelector(
     [selectCreators],
     (creators) => creators.creatorsArr
   );
+
+const selectGame = createSelector([selectGames], (games) => games.game);
+export const selectGameStatus = createSelector(
+    [selectGame],
+    (game) => game.status
+  ),
+  selectGameGame = createSelector([selectGame], (game) => game.game);
 
 export const {
   setGenresSectionFilterGenre,
