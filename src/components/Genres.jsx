@@ -12,6 +12,8 @@ import { Typography, Select, Option, Button } from '@material-tailwind/react';
 import { Card } from './Card';
 import { useEffect } from 'react';
 
+import { Link } from 'react-router-dom';
+
 export default function Genres() {
   const genresArr = useSelector(selectGenresArr),
     filterGenre = useSelector(selectGenresSectionFilterGenre),
@@ -45,7 +47,7 @@ export default function Genres() {
           {genresArr?.length && (
             <Select
               variant='standard'
-              label='Default'
+              label='Genres'
               onChange={handleSetGenre}
               value={filterGenre}
             >
@@ -74,12 +76,14 @@ export default function Genres() {
                   { title: 'Updated', paragraph: g.updated },
                 ]}
                 footer={
-                  <Button
-                    size='lg'
-                    fullWidth={true}
-                  >
-                    See more
-                  </Button>
+                  <Link to={`/games/${g.id}`}>
+                    <Button
+                      size='lg'
+                      fullWidth={true}
+                    >
+                      See more
+                    </Button>
+                  </Link>
                 }
                 cardFlex='col'
               />
@@ -94,12 +98,14 @@ export default function Genres() {
                   { title: 'Updated', paragraph: g.updated },
                 ]}
                 footer={
-                  <Button
-                    size='lg'
-                    fullWidth={true}
-                  >
-                    See more
-                  </Button>
+                  <Link to={`/games/${g.id}`}>
+                    <Button
+                      size='lg'
+                      fullWidth={true}
+                    >
+                      See more
+                    </Button>
+                  </Link>
                 }
                 cardFlex='col'
               />

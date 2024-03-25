@@ -7,6 +7,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock } from '@fortawesome/free-regular-svg-icons';
 import { faDesktop, faGlobe, faTag } from '@fortawesome/free-solid-svg-icons';
 
+import { Link } from 'react-router-dom';
+
 export default function Hero() {
   const bannerGame = useSelector(selectBannerGame);
 
@@ -137,7 +139,9 @@ export default function Hero() {
               </div>
             </div>
             <div>
-              <Button size='lg'>See more</Button>
+              <Link to={`/games/${bannerGame.id}`}>
+                <Button size='lg'>See more</Button>
+              </Link>
             </div>
           </div>
         </div>
