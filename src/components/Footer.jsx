@@ -23,16 +23,12 @@ export default function Footer() {
                   to={r.route}
                   key={i}
                 >
-                  <li>
-                    <Typography
-                      as='a'
-                      href='#'
-                      color='blue-gray'
-                      className='font-normal transition-colors hover:text-blue-500 focus:text-blue-500'
-                    >
-                      {r.name}
-                    </Typography>
-                  </li>
+                  <Typography
+                    color='blue-gray'
+                    className='font-normal transition-colors hover:text-blue-500 focus:text-blue-500'
+                  >
+                    {r.name}
+                  </Typography>
                 </Link>
               )
           )}

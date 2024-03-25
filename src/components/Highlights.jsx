@@ -3,6 +3,8 @@ import { selectGamesArr } from '../redux/gamesSlice';
 import { Typography, Button } from '@material-tailwind/react';
 import { Card } from './Card';
 
+import { Link } from 'react-router-dom';
+
 export default function Highlights() {
   const gamesArr = useSelector(selectGamesArr);
 
@@ -19,7 +21,7 @@ export default function Highlights() {
       </div>
       <div className='overflow-hidden w-5/6 h-full flex flex-row flex-wrap gap-12 justify-center'>
         {gamesArr?.length > 0 &&
-          gamesArr.slice(0, 9).map((g, i) => (
+          gamesArr?.slice(0, 9)?.map((g, i) => (
             <Card
               key={i}
               backgroundImage={g.background_image}
@@ -29,12 +31,14 @@ export default function Highlights() {
                 { title: 'Updated', paragraph: g.updated },
               ]}
               footer={
-                <Button
-                  size='lg'
-                  fullWidth={true}
-                >
-                  See more
-                </Button>
+                <Link to={`/games/${g.id}`}>
+                  <Button
+                    size='lg'
+                    fullWidth={true}
+                  >
+                    See more
+                  </Button>
+                </Link>
               }
               cardFlex='col'
             />
