@@ -154,10 +154,10 @@ export const gamesSlice = createSlice({
     setGenresSectionFilterGenre: (state, action) => {
       state.genresSection.filterGenre = action.payload;
     },
-    setCurrentPageIndex: (state, action) => {
+    setGamesPaginationCurrentPageIndex: (state, action) => {
       state.gamesPagination.currentPageIndex = action.payload;
     },
-    setPageSize: (state, action) => {
+    setGamesPaginationPageSize: (state, action) => {
       state.gamesPagination.pageSize = action.payload;
     },
   },
@@ -291,20 +291,23 @@ export const selectGamesPaginationStatus = createSelector(
     [selectGamesPagination],
     (gamesPagination) => gamesPagination.status
   ),
-  selectCurrentPageIndex = createSelector(
+  selectGamesPaginationCurrentPageIndex = createSelector(
     [selectGamesPagination],
     (gamesPagination) => gamesPagination.currentPageIndex
   ),
-  selectCurrrentPageGamesArr = createSelector(
+  selectGamesPaginationCurrrentPageGamesArr = createSelector(
     [selectGamesPagination],
     (gamesPagination) => gamesPagination.currentPage.gamesArr
   ),
-  selectPageSize = createSelector(
+  selectGamesPaginationPageSize = createSelector(
     [selectGamesPagination],
     (gamesPagination) => gamesPagination.pageSize
   );
 
-export const { setGenresSectionFilterGenre, setCurrentPageIndex, setPageSize } =
-  gamesSlice.actions;
+export const {
+  setGenresSectionFilterGenre,
+  setGamesPaginationCurrentPageIndex,
+  setGamesPaginationPageSize,
+} = gamesSlice.actions;
 
 export default gamesSlice.reducer;
