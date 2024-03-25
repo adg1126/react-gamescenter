@@ -21,7 +21,7 @@ export function Card(props) {
             src={backgroundImage}
             alt={title}
           />
-          <div className='to-bg-black-10 absolute inset-0 h-full w-full bg-gradient-to-tr from-transparent via-transparent to-black/60 ' />
+          <div className='to-bg-black-10 absolute inset-0 h-1/2 w-full bg-gradient-to-tr from-transparent via-transparent to-black/80' />
         </>
       ) : (
         <div className='md:w-2/5'>
@@ -34,7 +34,11 @@ export function Card(props) {
         </div>
       )}
 
-      <CardBody className={`${cardFlex ? '' : 'md:w-3/5'}`}>
+      <CardBody
+        className={`${
+          cardFlex ? '' : 'md:w-3/5'
+        } bg-gradient-to-tr from-transparent via-transparent to-black/60`}
+      >
         <div className='mb-3 flex flex-col md:flex-row md:items-center md:justify-between gap-y-1'>
           <Typography
             variant='h5'
